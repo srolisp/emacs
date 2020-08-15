@@ -1,0 +1,195 @@
+* emacs modes
+** appearances
+#+BEGIN_SRC emacs-lisp
+  (tooltip-mode -1)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+
+  (setq inhibit-splash-screen t)
+
+  (global-linum-mode 1)
+  (setq frame-background-mode 'dark)	; YES!
+  (display-time-mode 1)
+  ;; (display-battery-mode 1) ; ipad: not work
+  (setq column-number-mode 1)
+
+  (show-paren-mode 1)
+  (setq show-paren-delay 0)
+  (setq show-paren-style 'expression)
+
+  (global-hl-line-mode 1)
+
+  (set-face-attribute 'mode-line nil
+                      :foreground "#002b00" :background "#ffe97a"
+                      :inverse-video nil
+                      :box '(:color "grey25" :style nil))
+
+  (set-face-attribute 'mode-line-inactive nil
+                      :foreground "grey" :background "grey20"
+                      :inverse-video nil
+                      :box '(:color "grey20" :style nil))
+  ;; distinguish linum on background
+  (set-face-attribute 'linum nil
+                      :foreground "grey" :background "grey20"
+                      :inverse-video nil
+                      :box '(:color "grey20" :style nil))
+
+  (if (fboundp 'global-font-lock-mode)
+      (global-font-lock-mode 1))
+#+END_SRC
+                      
+** etc
+#+BEGIN_SRC emacs-lisp
+  (setq-default user-full-name "srolisp")
+  (setq-default user-mail-address "srolisp@gmail.com")
+
+  (setq backup-inhibited           t)
+  (setq make-backup-files        nil)
+  (setq auto-save-default        nil)
+  (setq auto-save-list-file-name nil) 
+
+  (setq scroll-step            1
+        scroll-margin            10
+        scroll-conservatively  10000)
+
+  (defalias 'yes-or-no-p 'y-or-n-p)
+
+  (savehist-mode 1)
+
+  (electric-pair-mode   -1)
+  (electric-indent-mode -1)
+
+  (delete-selection-mode t)
+
+  (setq use-dialog-box nil)
+
+  (size-indication-mode          t)
+
+  (setq-default indent-tabs-mode nil)
+  (setq-default tab-always-indent nil)
+
+  (setq next-line-add-newlines nil)
+
+  (setq auto-window-vscroll nil)
+
+  (setq split-height-threshold nil)
+  (setq split-width-threshold 0)
+
+  (recentf-mode 1)
+  (setq recentf-max-menu-items 150)
+  (setq recentf-max-saved-items 100)
+
+#+END_SRC
+
+* built-in
+** imenu
+#+BEGIN_SRC emacs-lisp
+  (require 'imenu)
+  (setq imenu-auto-rescan      t) ;; автоматически обновлять список функций в буфере
+  (setq imenu-use-popup-menu nil)
+#+END_SRC
+
+** semantic
+#+BEGIN_SRC emacs-lisp
+  (semantic-mode 1)
+#+END_SRC
+
+** saveplace
+#+BEGIN_SRC emacs-lisp
+  ;; save-place-mode is an interactive compiled Lisp function.
+
+  ;; (save-place-mode &optional ARG)
+
+  ;;   Probably introduced at or before Emacs version 25.1.
+
+  ;; Non-nil means automatically save place in each file.
+  ;; This means when you visit a file, point goes to the last place
+  ;; where it was when you previously visited the same file.
+
+  (require 'saveplace)
+  (setq-default save-place t)
+  (setq save-place-file "~/.emacs.d/saved-places")
+  (setq save-place-forget-unreadable-files t)
+#+END_SRC
+
+** whitespace
+#+BEGIN_SRC emacs-lisp
+  ;; (require 'whitespace)
+  ;; (autoload 'global-whitespace-mode  "whitespace" "Toggle whitespace visualization." t)
+  ;; (setq whitespace-style
+  ;;       '(face trailing spaces lines-tail empty indentation::tab indentation::space tabs newline space-mark tab-mark newline-mark))
+  ;; (global-whitespace-mode 1)
+  ;; (setq whitespace-display-mappings
+  ;;       ;; all numbers are Unicode codepoint in decimal. ⁖ (insert-char 182 1)
+  ;;       '(
+  ;;         (space-mark 32 [183] [46]) ; 32 SPACE 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+  ;;         (newline-mark 10 [8617 10]) ; 10 LINE FEED
+  ;;         (lines-tail 10 [8617 10]) ; 10 LINE FEED
+  ;;         (tab-mark 9 [8594 9] [183 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+  ;;         )
+  ;;       whitespace-line-column 130)
+  ;; 
+#+END_SRC
+
+* third party
+# ** slime
+# #+BEGIN_SRC emacs-lisp
+#   (setq inferior-lisp-program "/usr/bin/sbcl")
+# #+END_SRC
+
+** elpy
+#+BEGIN_SRC emacs-lisp
+  (elpy-enable)			
+  (setq python-shell-interpreter "ipython"
+        python-shell-interpreter-args "-i --simple-prompt")
+
+  (setq elpy-rpc-virtualenv-path 'current)
+
+  ;; (setq elpy-rpc-backend "jedi")
+  ;;  (add-hook 'python-mode-hook (lambda ()
+  ;; 			       (setq indent-tabs-mode nil)))
+
+
+#+END_SRC
+
+** lsp
+#+BEGIN_SRC emacs-lisp
+  ;; (setq lsp-keymap-prefix "s-l")
+
+  (require 'lsp-mode)
+  (add-hook 'python-mode-hook #'lsp-deferred)
+#+END_SRC
+
+** lsp-ui
+#+BEGIN_SRC emacs-lisp
+  (require 'lsp-ui)
+  (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+#+END_SRC
+
+** flycheck
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change))
+  (setq flycheck-indication-mode 'left-fringe)
+  (setq flycheck-checker-error-threshold 2000)
+#+END_SRC
+
+** pdf-view
+#+BEGIN_SRC emacs-lisp
+  ;; cause of pdf-view-mode LAG!
+  (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
+#+END_SRC
+
+* keybindings
+#+BEGIN_SRC emacs-lisp
+  ;; ;; Multiple cursors
+  ;; (global-set-key (kbd "C-c <right>") 'mc/mark-next-like-this-word) ; choose same word next
+  ;; (global-set-key (kbd "C-c <left>") 'mc/mark-previous-word-like-this) ; choose same word previous
+  ;; (global-set-key (kbd "M-n") 'mc/mark-next-like-this) ; choose char from next line same position
+  ;; (global-set-key (kbd "M-m") 'mc/mark-previous-like-this); choose char from previous line same position
+
+  ;; (global-set-key (kbd "C-c C-_") 'mc/mark-all-like-this)
+  ;; (global-set-key (kbd "C-x M-m") 'back-to-indentation)
+#+END_SRC
