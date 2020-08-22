@@ -67,7 +67,7 @@
   (size-indication-mode          t)
 
   (setq-default indent-tabs-mode nil)
-  (setq-default tab-always-indent nil)
+  ;; (setq-default tab-always-indent nil)
 
   (setq next-line-add-newlines nil)
 
@@ -132,12 +132,34 @@
   ;; 
 #+END_SRC
 
+** org
+*** babel
+#+BEGIN_SRC emacs-lisp
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '(
+       (python . t)
+       (ipython . t)
+       ;; (sh . t)
+       ;; (shell . t)
+       (ein . t)
+       ;; Include other languages here...
+       ))
+    ;; ;; Syntax highlight in #+BEGIN_SRC blocks
+    ;; (setq org-src-fontify-natively t)
+    ;; Don't prompt before running code in org
+    (setq org-confirm-babel-evaluate nil)
+
+  ;;; display/update images in the buffer after I evaluate
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+    ;; ;; Fix an incompatibility between the ob-async and ob-ipython packages
+    ;; (setq ob-async-no-async-languages-alist '("ipython"))
+#+END_SRC
 * third party
 # ** slime
 # #+BEGIN_SRC emacs-lisp
 #   (setq inferior-lisp-program "/usr/bin/sbcl")
 # #+END_SRC
-
 ** elpy
 #+BEGIN_SRC emacs-lisp
   (elpy-enable)			
@@ -180,6 +202,26 @@
 #+BEGIN_SRC emacs-lisp
   ;; cause of pdf-view-mode LAG!
   (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
+#+END_SRC
+
+** company
+#+BEGIN_SRC emacs-lisp
+    (add-hook 'after-init-hook #'global-company-mode)
+#+END_SRC
+
+** avy
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c a c") 'avy-goto-char)
+  (global-set-key (kbd "C-c a C") 'avy-goto-char-2)
+  (global-set-key (kbd "C-c a l") 'avy-goto-line)
+  (global-set-key (kbd "C-c a w") 'avy-goto-word-1)
+  (global-set-key (kbd "C-c a W") 'avy-goto-word-0)
+  (global-set-key (kbd "C-c a s") 'avy-goto-symbol-1)
+#+END_SRC
+
+** ein
+#+BEGIN_SRC emacs-lisp
+  (setq ein:output-area-inlined-images t)
 #+END_SRC
 
 * keybindings
